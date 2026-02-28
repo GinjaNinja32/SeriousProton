@@ -339,7 +339,7 @@ static void *checkclib (lua_State *L, const char *path) {
 */
 static void addtoclib (lua_State *L, const char *path, void *plib) {
   lua_getfield(L, LUA_REGISTRYINDEX, CLIBS);
-  lua_pushlightuserdata(L, plib);
+  lua_pushlightuserdata(L, (lua_LightUserdata)plib);
   lua_pushvalue(L, -1);
   lua_setfield(L, -3, path);  /* CLIBS[path] = plib */
   lua_rawseti(L, -2, luaL_len(L, -2) + 1);  /* CLIBS[#CLIBS + 1] = plib */

@@ -635,7 +635,7 @@ LUALIB_API void luaL_buffinit (lua_State *L, luaL_Buffer *B) {
   B->b = B->init.b;
   B->n = 0;
   B->size = LUAL_BUFFERSIZE;
-  lua_pushlightuserdata(L, (void*)B);  /* push placeholder */
+  lua_pushlightuserdata(L, (lua_LightUserdata)B);  /* push placeholder */
 }
 
 

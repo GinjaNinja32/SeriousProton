@@ -42,13 +42,12 @@
 #define makevariant(t,v)	((t) | ((v) << 4))
 
 
-
 /*
 ** Union of all Lua values
 */
 typedef union Value {
   struct GCObject *gc;    /* collectable objects */
-  void *p;         /* light userdata */
+  lua_LightUserdata p; /* light userdata */
   lua_CFunction f; /* light C functions */
   lua_Integer i;   /* integer numbers */
   lua_Number n;    /* float numbers */

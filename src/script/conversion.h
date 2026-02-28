@@ -47,7 +47,7 @@ template<> struct Convert<lua_CFunction> {
 template<> struct Convert<ecs::Entity> {
     static int toLua(lua_State* L, ecs::Entity value) {
         static_assert(sizeof(void*) == sizeof(ecs::Entity));
-        union { void* ptr; ecs::Entity e; }u{};
+        union { lua_LightUserdata ptr; ecs::Entity e; }u{};
         u.e = value;
         lua_pushlightuserdata(L, u.ptr);
         return 1;
@@ -56,8 +56,12 @@ template<> struct Convert<ecs::Entity> {
         static_assert(sizeof(void*) == sizeof(ecs::Entity));
         if (!lua_islightuserdata(L, idx))
             return {};
-        union { void* ptr; ecs::Entity e; }u{};
+        union { lua_LightUserdata ptr; ecs::Entity e; }u{};
+#ifdef SP_HAX
+        u.ptr = lua_tolightuserdata(L, idx);
+#else
         u.ptr = lua_touserdata(L, idx);
+#endif
         return u.e;
     }
 };

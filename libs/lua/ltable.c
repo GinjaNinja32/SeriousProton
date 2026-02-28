@@ -171,7 +171,7 @@ static Node *mainpositionTV (const Table *t, const TValue *key) {
     case LUA_VTRUE:
       return hashboolean(t, 1);
     case LUA_VLIGHTUSERDATA: {
-      void *p = pvalue(key);
+      lua_LightUserdata p = pvalue(key);
       return hashpointer(t, p);
     }
     case LUA_VLCF: {

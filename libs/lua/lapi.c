@@ -447,7 +447,7 @@ LUA_API lua_CFunction lua_tocfunction (lua_State *L, int idx) {
 l_sinline void *touserdata (const TValue *o) {
   switch (ttype(o)) {
     case LUA_TUSERDATA: return getudatamem(uvalue(o));
-    case LUA_TLIGHTUSERDATA: return pvalue(o);
+    case LUA_TLIGHTUSERDATA: return (void*)pvalue(o);
     default: return NULL;
   }
 }
@@ -456,6 +456,12 @@ l_sinline void *touserdata (const TValue *o) {
 LUA_API void *lua_touserdata (lua_State *L, int idx) {
   const TValue *o = index2value(L, idx);
   return touserdata(o);
+}
+LUA_API lua_LightUserdata lua_tolightuserdata (lua_State *L, int idx) {
+  const TValue *o = index2value(L, idx);
+  if (ttype(o) == LUA_TLIGHTUSERDATA)
+    return pvalue(o);
+  return 0;
 }
 
 
@@ -613,7 +619,7 @@ LUA_API void lua_pushboolean (lua_State *L, int b) {
 }
 
 
-LUA_API void lua_pushlightuserdata (lua_State *L, void *p) {
+LUA_API void lua_pushlightuserdata (lua_State *L, lua_LightUserdata p) {
   lua_lock(L);
   setpvalue(s2v(L->top.p), p);
   api_incr_top(L);
@@ -754,7 +760,7 @@ LUA_API int lua_rawgetp (lua_State *L, int idx, const void *p) {
   TValue k;
   lua_lock(L);
   t = gettable(L, idx);
-  setpvalue(&k, cast_voidp(p));
+  setpvalue(&k, cast_ludata(p));
   return finishrawget(L, luaH_get(t, &k));
 }
 
@@ -913,7 +919,7 @@ LUA_API void lua_rawset (lua_State *L, int idx) {
 
 LUA_API void lua_rawsetp (lua_State *L, int idx, const void *p) {
   TValue k;
-  setpvalue(&k, cast_voidp(p));
+  setpvalue(&k, cast_ludata(p));
   aux_rawset(L, idx, &k, 1);
 }
 
